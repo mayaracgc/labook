@@ -34,16 +34,20 @@ SELECT * FROM likes_dislikes;
 DROP TABLE likes_dislikes;
 
 INSERT INTO users(id, name, email, password, role)
-VALUES ("u001", "Mayara", "mayara@labook.com", "1234", "n"),
-        ("u002", "Thiago", "thiago@labook.com", "5678", "n"),
-        ("u003", "Belinha", "belinha@labook.com", "0910", "n");
+VALUES ("u001", "Mayara", "mayara@labook.com", "1234", "normal"),
+        ("u002", "Thiago", "thiago@labook.com", "5678", "normal"),
+        ("u003", "Belinha", "belinha@labook.com", "0910", "normal");
 
 INSERT INTO posts (id, creator_id, content, likes, dislikes)
 VALUES ("p001", "u002", "Segundou", 8, 0),
         ("p002", "u001", "No pain no gain", 9, 0),
-        ("p003", "u003", "Preguiçaaa", 25, 0);
+        ("p003", "u003", "Preguiçaaa", 25, 0),
+        ("p004", "u001", "Bora, que hoje é só o começo!", 11, 0),
+        ("p005", "u003", "Pra que eu acordei?!", 21, 3);
 
 INSERT INTO likes_dislikes (user_id, post_id, like)
 VALUES ("u001", "p002", 9),
         ("u002", "p001", 8),
-        ("u003", "p003", 25); 
+        ("u003", "p003", 25), 
+        ("u001", "p004", 11),
+        ("u003", "p005", 21); 
