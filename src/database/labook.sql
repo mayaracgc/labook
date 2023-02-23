@@ -51,3 +51,16 @@ VALUES ("u001", "p002", 9),
         ("u003", "p003", 25), 
         ("u001", "p004", 11),
         ("u003", "p005", 21); 
+
+
+SELECT * from likes_dislikes
+INNER JOIN users
+ON likes_dislikes.user_id = users.id
+RIGHT JOIN posts
+ON likes_dislikes.post_id = posts.id;
+
+SELECT * FROM posts
+LEFT JOIN likes_dislikes
+ON likes_dislikes.post_id = posts.id
+LEFT JOIN users
+ON likes_dislikes.user_id = users.id;
