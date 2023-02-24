@@ -4,6 +4,8 @@ import { userRouter } from './routers/userRouter'
 import knex from 'knex'
 import { db } from './database/BaseDatabase'
 import { TLikesDislikesDB, TPostsDB, TPostsWithUsers, TUserDB } from './types'
+import { User } from './models/User'
+import { Post } from './models/Post'
 
 
 const app = express()
@@ -39,15 +41,32 @@ app.get("/ping", async (req: Request, res: Response) => {
 
 app.get("/users", async (req: Request, res: Response) => {
     try {
-        const q = req.query.q as string | undefined
+        const q = req.query.q 
 
-        if (q === undefined) {
-            const result = await db("users")
-            res.status(200).send(result)
+        let usersDB
+
+        if (q) {
+            const result: TUserDB[] = await db("users").where("name", "LIKE", `%${q}%`)
+            usersDB = result
+            // res.status(200).send(result)
         } else {
-            const result = await db("users").where("name", "LIKE", `%${q}%`)
-            res.status(200).send(result)
+            const result: TUserDB[] = await db("users")
+            usersDB = result
+            // res.status(200).send(result)
         }
+
+        const users: User[] = usersDB.map((userDB)=> 
+            new User(
+                userDB.id,
+                userDB.name,
+                userDB.email,
+                userDB.password,
+                userDB.role,
+                userDB.created_at
+            )
+        )
+
+        res.status(200).send(users)
 
     } catch (error) {
         console.log(error)
@@ -66,7 +85,7 @@ app.get("/users", async (req: Request, res: Response) => {
 
 app.post("/users", async (req: Request, res: Response) => {
     try {
-        const { id, name, email, password, role, created_at } = req.body
+        const { id, name, email, password, role} = req.body
 
         if (typeof id !== "string") {
             res.status(400)
@@ -94,7 +113,6 @@ app.post("/users", async (req: Request, res: Response) => {
             throw new Error("'id' já existe")
         }
 
-
         const [userEmailAlreadyExists]: TUserDB[] | undefined[] = await db("users").where({ email })
 
         if (userEmailAlreadyExists) {
@@ -102,21 +120,35 @@ app.post("/users", async (req: Request, res: Response) => {
             throw new Error("'email' já existe")
         }
 
-        const newUser: TUserDB = {
+        // const newUser: TUserDB = {
+        //     id,
+        //     name,
+        //     email,
+        //     password,
+        //     role,
+        //     created_at
+        // }
+        const newUser = new User (
             id,
             name,
             email,
             password,
             role,
-            created_at
+            new Date().toISOString()
+        )
+        const newUserDB: TUserDB ={
+            id: newUser.getId(),
+            name: newUser.getName(),
+            email: newUser.getEmail(),
+            password: newUser.getPassword(),
+            role: newUser.getRole(),
+            created_at: newUser.getCreatedAt()
         }
 
-        await db("users").insert(newUser)
+        await db("users").insert(newUserDB)
+        const [ userDB ]: TUserDB[] = await db("users").where({id})
 
-        res.status(201).send({
-            message: "User criado com sucesso",
-            user: newUser
-        })
+        res.status(201).send(newUser)
 
     } catch (error) {
         console.log(error)
@@ -170,19 +202,33 @@ app.delete("/users/:id", async (req: Request, res: Response) => {
 
 app.get("/posts", async (req: Request, res: Response) => {
     try {
-        const q = req.query.q as string | undefined
+        const q = req.query.q 
 
-        if (q === undefined) {
-            const result = await db("posts")
-            res.status(200).send(result)
+        let postsDB
+
+        if (q) {
+            const result: TPostsDB[] = await db("posts")
+            .where("id", "LIKE", `%${q}%`)
+            .orWhere("content", "LIKE", `%${q}%`)
+            postsDB = result
+
         } else {
-            const result = await db("posts")
-                .where("id", "LIKE", `%${q}%`)
-                .orWhere("content", "LIKE", `%${q}%`)
-
-            res.status(200).send(result)
+            const result: TPostsDB[] = await db("posts")
+            postsDB = result
         }
 
+        const posts: Post[] = postsDB.map((postDB) =>
+        new Post(
+            postDB.id,
+            postDB.creator_id,
+            postDB.content,
+            postDB.likes,
+            postDB.dislikes,
+            postDB.created_at,
+            postDB.updated_at
+        ))
+
+        res.status(200).send(posts)
     } catch (error) {
         console.log(error)
 
@@ -217,7 +263,6 @@ app.post("/posts", async (req: Request, res: Response) => {
             throw new Error("'content' deve ser string")
         }
 
-
         const [postsIdAlreadyExists]: TPostsDB[] | undefined[] = await db("posts").where({ id })
 
         if (postsIdAlreadyExists) {
@@ -225,23 +270,29 @@ app.post("/posts", async (req: Request, res: Response) => {
             throw new Error("'id' já existe")
         }
 
-
-        const newPosts = {
+        const newPosts = new Post (
             id,
             creatorId,
             content,
             likes,
-            dislikes
+            dislikes,
+            new Date().toISOString(),
+            new Date().toISOString()
+        )
+        const newPostDB: TPostsDB = {
+            id: newPosts.getId(),
+            creator_id: newPosts.getCreatorId(),
+            content: newPosts.getContent(),
+            likes: newPosts.getLikes(),
+            dislikes: newPosts.getDislikes(),
+            created_at: newPosts.getCreatedAt(),
+            updated_at: newPosts.getUpdatedAt()
         }
 
-        await db("posts").insert(newPosts)
+        await db("posts").insert(newPostDB)
+        const [ postsDB ]: TPostsDB[] = await db("posts").where({ id })
 
-        const [insertedPost]: TPostsDB[] = await db("posts").where({ id })
-
-        res.status(201).send({
-            message: "Post criado com sucesso",
-            post: insertedPost
-        })
+        res.status(201).send(newPosts)
 
     } catch (error) {
         console.log(error)
@@ -390,7 +441,6 @@ app.delete("/posts/:id", async (req: Request, res: Response) => {
         }
     }
 })
-
 
 app.post("/posts/:postId/users/userId", async (req: Request, res: Response) => {
     try {
