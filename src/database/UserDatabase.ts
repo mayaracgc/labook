@@ -1,4 +1,4 @@
-import { TUserDB } from "../types";
+import { UserDB } from "../types";
 import { BaseDatabase } from "./BaseDatabase";
 
 export class UserDatabase extends BaseDatabase {
@@ -7,14 +7,14 @@ export class UserDatabase extends BaseDatabase {
     public async findUsers(q: string | undefined){
 
         if (q) {
-            const result: TUserDB[] = await BaseDatabase
+            const result: UserDB[] = await BaseDatabase
             .connection(UserDatabase.TABLE_USERS)
             .where("name", "LIKE", `%${q}%`)
 
             return result
 
         } else {
-            const result: TUserDB[] = await BaseDatabase
+            const result: UserDB[] = await BaseDatabase
             .connection(UserDatabase.TABLE_USERS)
             
             return result
@@ -22,7 +22,7 @@ export class UserDatabase extends BaseDatabase {
     }
 
     public async findUserById(id: string){
-        const [userId]: TUserDB[] | undefined[] = await BaseDatabase
+        const [userId]: UserDB[] | undefined[] = await BaseDatabase
         .connection(UserDatabase.TABLE_USERS)
         .where({ id })
 
@@ -30,28 +30,16 @@ export class UserDatabase extends BaseDatabase {
     }
 
     public async findUserByEmail(email: string){
-        const [userEmail]: TUserDB[] | undefined[] = await BaseDatabase
+        const [userEmail]: UserDB[] | undefined[] = await BaseDatabase
         .connection(UserDatabase.TABLE_USERS)
         .where({ email })
 
         return userEmail
     }
 
-    public async insertUser(newUserDB: TUserDB){
+    public async insertUser(newUserDB: UserDB){
         await BaseDatabase
         .connection(UserDatabase.TABLE_USERS)
         .insert(newUserDB)
-    }
-
-    public async deleteUserById(id: string){
-        // const [userIdAlreadyExists]: TUserDB[] | undefined[] = await BaseDatabase
-        // .connection(UserDatabase.TABLE_USERS)
-        // .where({ id: idToDelete })
-
-        await BaseDatabase
-        .connection(UserDatabase.TABLE_USERS)
-        .delete()
-        .where({ id })
-
     }
 }

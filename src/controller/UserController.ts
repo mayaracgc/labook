@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import { UserBusiness } from "../business/UserBusiness"
 import { UserDatabase } from "../database/UserDatabase"
 import { User } from "../models/User"
-import { TUserDB } from "../types"
+import { UserDB } from "../types"
 
 export class UserController {
     public getUsers = async (req: Request, res: Response) => {
@@ -83,7 +83,7 @@ export class UserController {
                 role,
                 new Date().toISOString()
             )
-            const newUserDB: TUserDB = {
+            const newUserDB: UserDB = {
                 id: newUser.getId(),
                 name: newUser.getName(),
                 email: newUser.getEmail(),
@@ -93,7 +93,6 @@ export class UserController {
             }
 
             await userDatabase.insertUser(newUserDB)
-            // const [ userDB ]: TUserDB[] = await db("users").where({id})
 
             res.status(201).send(newUser)
 
@@ -112,42 +111,5 @@ export class UserController {
         }
     }
 
-    // public deleteUsers = async (req: Request, res: Response) => {
-    //     try {
-    //         const idToDelete = req.params.id
-
-    //         const userDatabase = new UserDatabase()
-
-    //         if (idToDelete[0] !== "u") {
-    //             res.status(400)
-    //             throw new Error("'id' deve iniciar com a letra 'u'")
-    //         }
-
-    //         // const [userIdAlreadyExists]: TUserDB[] | undefined[] = await db("users").where({ id: idToDelete })
-    //         const userIdAlreadyExists = await userDatabase.deleteUserById(id)
-
-    //         if (!userIdAlreadyExists) {
-    //             res.status(404)
-    //             throw new Error("'id' não encontrado")
-    //         }
-
-    //         await userDatabase.deleteUserById(idToDelete.id)
-
-    //         res.status(200).send({ message: "User deletado com sucesso" })
-
-    //     } catch (error) {
-    //         console.log(error)
-
-    //         if (req.statusCode === 200) {
-    //             res.status(500)
-    //         }
-
-    //         if (error instanceof Error) {
-    //             res.send(error.message)
-    //         } else {
-    //             res.send("Erro inesperado")
-    //         }
-    //     }
-    // }
 }
 

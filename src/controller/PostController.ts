@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { PostDatabase } from '../database/PostDatabase'
 import { Post } from '../models/Post'
-import { TPostsDB } from '../types'
+import { PostsDB } from '../types'
 
 export class PostController{
     public getPosts = async (req: Request, res: Response) => {
@@ -72,7 +72,7 @@ export class PostController{
                 new Date().toISOString(),
                 new Date().toISOString()
             )
-            const newPostDB: TPostsDB = {
+            const newPostDB: PostsDB = {
                 id: newPosts.getId(),
                 creator_id: newPosts.getCreatorId(),
                 content: newPosts.getContent(),
@@ -157,7 +157,7 @@ export class PostController{
     //             }
     //         }
     
-    //         // const [posts]: TPostsDB[] | undefined[] = await db("posts").where({ id: idToEdit })
+    //         // const [posts]: PostsDB[] | undefined[] = await db("posts").where({ id: idToEdit })
     //         const postDatabase = new PostDatabase()
     
     //         const posts = await postDatabase.updatePostById(id: idToEdit)
@@ -167,7 +167,7 @@ export class PostController{
     //         }
     
     
-    //         const newPosts: TPostsDB = {
+    //         const newPosts: PostsDB = {
     //             id: newId || posts.id,
     //             creator_id: newCreatorId || posts.creator_id,
     //             content: newContent || posts.content,

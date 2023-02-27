@@ -1,4 +1,4 @@
-import { TPostsDB } from "../types"
+import { PostsDB } from "../types"
 
 export class Post {
     constructor (
