@@ -3,7 +3,7 @@ export enum USER_ROLES {
     ADMIN = "ADMIN"
 }
 
-export  type TUserDB = {
+export  interface UserDB {
     id: string,
     name: string,
     email: string,
@@ -12,7 +12,7 @@ export  type TUserDB = {
     created_at: string
 }
 
-export  type TPostsDB = {
+export  interface PostsDB {
     id: string,
     creator_id: string, 
     content: string, 
@@ -22,13 +22,13 @@ export  type TPostsDB = {
     updated_at: string
 }
 
-export type TLikesDislikesDB ={
+export interface LikesDislikesDB {
     user_id: string,
     post_id: string,
     like: number
 }
 
-export  type TPostsWithUsers = {
+export interface PostsWithUsers {
     id: string,
     creator_id: string, 
     content: string, 
@@ -36,5 +36,5 @@ export  type TPostsWithUsers = {
     dislikes: number,
     created_at: string,
     updated_at: string,
-    like: TUserDB[]
+    like: UserDB[]
 }
