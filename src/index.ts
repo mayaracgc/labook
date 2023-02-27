@@ -1,8 +1,7 @@
 import express from 'express'
 import cors from 'cors'
-import { UserController } from './controller/UserController'
-import { PostController } from './controller/PostController'
-
+import { userRouter } from './routers/userRouter'
+import { postRouter } from './routers/postRouter'
 
 const app = express()
 
@@ -13,19 +12,5 @@ app.listen(3003, () => {
     console.log(`Servidor rodando na porta ${3003}`)
 })
 
-
-const userController = new UserController() //instanciando a classe
-const postController = new PostController()
-
-app.get("/users", userController.getUsers)
-
-app.post("/users", userController.createUsers)
-
-
-app.get("/posts", postController.getPosts)
-
-app.post("/posts", postController.createPosts)
-
-// app.put("/posts/:id", postController.updatePosts)
-
-// app.delete("/posts/:id", postController.deletePosts)
+app.use("/users", userRouter)
+app.use("/post", postRouter)
