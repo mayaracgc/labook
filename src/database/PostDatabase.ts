@@ -1,3 +1,4 @@
+import { resourceLimits } from "worker_threads";
 import { PostsDB } from "../types";
 import { BaseDatabase } from "./BaseDatabase";
 
@@ -5,11 +6,20 @@ import { BaseDatabase } from "./BaseDatabase";
 export class PostDatabase extends BaseDatabase {
     public static TABLE_POSTS = "posts"
 
-    public async findPosts() {
-        const postsDB: PostsDB[] = await BaseDatabase
+    public async findPosts(q: string | undefined) {
+
+        if(q){
+            const result: PostsDB[] = await BaseDatabase
             .connection(PostDatabase.TABLE_POSTS)
 
-        return postsDB
+            return result 
+            
+        }else{
+            const result: PostsDB[] = await BaseDatabase
+            .connection(PostDatabase.TABLE_POSTS)
+            
+            return result
+        }
     }
 
     public async findPostById(id: string) {

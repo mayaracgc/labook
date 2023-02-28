@@ -1,12 +1,22 @@
 import { Request, Response } from 'express'
 import { PostBusiness } from '../business/PostBusiness'
+import { PostDTO } from '../dtos/PostDTO'
 import { BaseError } from '../errors/BaseError'
 
 export class PostController{
+    constructor (
+        private postDTO: PostDTO,
+        private postBisness: PostBusiness
+    ){}
+
     public getPosts = async (req: Request, res: Response) => {
         try {
-            const postBusiness = new PostBusiness()
-            const output = await postBusiness.getPosts()
+            const input = {
+                q: req.query.q
+            }
+
+            // const postBusiness = new PostBusiness()
+            const output = await this.postBisness.getPosts(input)
     
             res.status(200).send(output)
         } catch (error) {
@@ -22,18 +32,24 @@ export class PostController{
 
     public createPosts = async (req: Request, res: Response) => {
         try {
-            const { id, creatorId, content, likes, dislikes } = req.body
+            // const { id, creatorId, content, likes, dislikes } = req.body
 
-            const input = {
-                id,
-                creatorId,
-                content,
-                likes,
-                dislikes
-            }
+            // const input = {
+            //     id,
+            //     creatorId,
+            //     content,
+            //     likes,
+            //     dislikes
+            // }
+            // const postDTO = new PostDTO()
+            const input = this.postDTO.createPostInput(
+                req.body.id,
+                req.body.creatorId,
+                req.body.content
+            )
 
-            const postBusiness = new PostBusiness()
-            const output = await postBusiness.createPost(input)
+            // const postBusiness = new PostBusiness()
+            const output = await this.postBisness.createPost(input)
     
             res.status(201).send(output)
     
@@ -50,11 +66,13 @@ export class PostController{
 
     public updatePosts = async (req: Request, res: Response) => {
         try {
-            const id = req.params.id
-            const value = req.body.value
+            const input = this.postDTO.updatePostInput(
+                req.params.id,
+                req.body.value
+            )
 
-            const postBusiness  = new PostBusiness()
-            const output = await postBusiness.updatePosts(id, value)
+            // const postBusiness  = new PostBusiness()
+            const output = await this.postBisness.updatePosts(input)
 
             res.status(200).send(output)
     
@@ -75,8 +93,8 @@ export class PostController{
                 idToDelete: req.params.id
             } 
 
-            const postBusiness = new PostBusiness()
-            const output = await postBusiness.deletePosts(input)
+            // const postBusiness = new PostBusiness()
+            const output = await this.postBisness.deletePosts(input)
     
             res.status(200).send(output)    
     
